@@ -650,14 +650,15 @@ const FitnessCoachApp: React.FC = () => {
     if (!generatedPlan) return [];
     
     const exercises: string[] = [];
-    Object.values(generatedPlan.workout).forEach(day => {
-      day.exercises.forEach(ex => {
-        const cleanName = ex.split('(')[0].trim();
-        if (!exercises.includes(cleanName)) {
-          exercises.push(cleanName);
-        }
-      });
-    });
+    Object.values(generatedPlan.workout).forEach((day: { exercises: string[] }) => {
+  day.exercises.forEach((ex: string) => {
+    const cleanName = ex.split("(")[0].trim();
+    if (!exercises.includes(cleanName)) {
+      exercises.push(cleanName);
+    }
+  });
+});
+
     return exercises;
   };
 
