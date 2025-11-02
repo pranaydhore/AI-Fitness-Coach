@@ -19,9 +19,9 @@ const FitnessCoachApp = () => {
     medicalHistory: '',
     stressLevel: 'medium'
   });
-  const [generatedPlan, setGeneratedPlan] = useState(null);
+  const [generatedPlan, setGeneratedPlan] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [motivation, setMotivation] = useState('');
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const FitnessCoachApp = () => {
     setMotivation(quotes[Math.floor(Math.random() * quotes.length)]);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -129,7 +129,7 @@ const FitnessCoachApp = () => {
     setIsLoading(false);
   };
 
-  const speakPlan = (section) => {
+  const speakPlan = (section: string) => {
     let text = '';
     if (section === 'workout') {
       text = 'Your weekly workout plan: Monday - ' + generatedPlan.workout.monday.exercises.join(', ');
