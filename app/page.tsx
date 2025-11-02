@@ -3,10 +3,50 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, Dumbbell, Utensils, Volume2, Download, Moon, Sun, RefreshCw, Sparkles, Heart, Target, Activity } from 'lucide-react';
 
-const FitnessCoachApp = () => {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [darkMode, setDarkMode] = useState(true);
-  const [formData, setFormData] = useState({
+interface FormData {
+  name: string;
+  age: string;
+  gender: string;
+  height: string;
+  weight: string;
+  goal: string;
+  fitnessLevel: string;
+  location: string;
+  diet: string;
+  medicalHistory: string;
+  stressLevel: string;
+}
+
+interface WorkoutDay {
+  exercises: string[];
+  cardio: string;
+}
+
+interface WorkoutPlan {
+  monday: WorkoutDay;
+  wednesday: WorkoutDay;
+  friday: WorkoutDay;
+}
+
+interface DietPlan {
+  breakfast: string;
+  lunch: string;
+  snack: string;
+  dinner: string;
+}
+
+interface GeneratedPlan {
+  workout: WorkoutPlan;
+  diet: DietPlan;
+  tips: string[];
+  bmi: string;
+  goalWeight: string;
+}
+
+const FitnessCoachApp: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<string>('home');
+  const [darkMode, setDarkMode] = useState<boolean>(true);
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     age: '',
     gender: 'male',
@@ -19,10 +59,10 @@ const FitnessCoachApp = () => {
     medicalHistory: '',
     stressLevel: 'medium'
   });
-  const [generatedPlan, setGeneratedPlan] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [motivation, setMotivation] = useState('');
+  const [motivation, setMotivation] = useState<string>('');
 
   useEffect(() => {
     const saved = localStorage.getItem('fitnessData');
@@ -34,8 +74,8 @@ const FitnessCoachApp = () => {
     generateMotivation();
   }, []);
 
-  const generateMotivation = () => {
-    const quotes = [
+  const generateMotivation = (): void => {
+    const quotes: string[] = [
       "Your only limit is you. Push harder today! 💪",
       "Success starts with self-discipline. Keep going! 🔥",
       "The body achieves what the mind believes! 🧠",
@@ -45,16 +85,16 @@ const FitnessCoachApp = () => {
     setMotivation(quotes[Math.floor(Math.random() * quotes.length)]);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const generatePlan = async () => {
+  const generatePlan = async (): Promise<void> => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    const workoutPlan = {
+    const workoutPlan: WorkoutPlan = {
       monday: {
         exercises: formData.location === 'home' 
           ? ['Push-ups (3 sets x 15 reps)', 'Squats (3 sets x 20 reps)', 'Plank (3 sets x 45 sec)', 'Lunges (3 sets x 12 reps)']
@@ -75,7 +115,7 @@ const FitnessCoachApp = () => {
       }
     };
 
-    const getDietPlan = () => {
+    const getDietPlan = (): DietPlan => {
       if (formData.diet === 'veg') {
         return {
           breakfast: 'Oatmeal with berries and almonds (350 cal)',
@@ -107,7 +147,7 @@ const FitnessCoachApp = () => {
       }
     };
 
-    const plan = {
+    const plan: GeneratedPlan = {
       workout: workoutPlan,
       diet: getDietPlan(),
       tips: [
@@ -129,7 +169,9 @@ const FitnessCoachApp = () => {
     setIsLoading(false);
   };
 
-  const speakPlan = (section: string) => {
+  const speakPlan = (section: string): void => {
+    if (!generatedPlan) return;
+    
     let text = '';
     if (section === 'workout') {
       text = 'Your weekly workout plan: Monday - ' + generatedPlan.workout.monday.exercises.join(', ');
@@ -141,12 +183,12 @@ const FitnessCoachApp = () => {
     speechSynthesis.speak(utterance);
   };
 
-  const generateImage = (item: string) => {
+  const generateImage = (item: string): void => {
     setSelectedImage(item);
     setTimeout(() => setSelectedImage(null), 3000);
   };
 
-  const exportPDF = () => {
+  const exportPDF = (): void => {
     alert('PDF export feature ready!');
   };
 
@@ -305,7 +347,7 @@ const FitnessCoachApp = () => {
                   <label className="block mb-2 font-semibold">Medical History (Optional)</label>
                   <textarea name="medicalHistory" value={formData.medicalHistory} onChange={handleInputChange}
                             className={`w-full p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}
-                            rows="3" placeholder="Any injuries, conditions, or medications..." />
+                            rows={3} placeholder="Any injuries, conditions, or medications..." />
                 </div>
 
                 <button onClick={generatePlan}
@@ -374,7 +416,7 @@ const FitnessCoachApp = () => {
                   <div key={day} className="mb-4 p-4 bg-purple-500/10 rounded-lg">
                     <h4 className="font-bold text-lg capitalize mb-2">{day}</h4>
                     <ul className="space-y-2">
-                      {data.exercises.map((ex, i) => (
+                      {data.exercises.map((ex: string, i: number) => (
                         <li key={i} className="flex items-start gap-2 cursor-pointer hover:bg-purple-500/20 p-2 rounded"
                             onClick={() => generateImage(ex)}>
                           <span className="text-purple-500">•</span>
@@ -412,7 +454,7 @@ const FitnessCoachApp = () => {
                 <Sparkles className="text-yellow-500" /> AI Tips & Motivation
               </h3>
               <ul className="space-y-2">
-                {generatedPlan.tips.map((tip, i) => (
+                {generatedPlan.tips.map((tip: string, i: number) => (
                   <li key={i} className="flex items-start gap-2 p-3 bg-yellow-500/10 rounded-lg">
                     <Heart className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-1" />
                     <span>{tip}</span>
