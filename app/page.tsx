@@ -141,7 +141,7 @@ const FitnessCoachApp = () => {
     speechSynthesis.speak(utterance);
   };
 
-  const generateImage = (item) => {
+  const generateImage = (item: string) => {
     setSelectedImage(item);
     setTimeout(() => setSelectedImage(null), 3000);
   };
